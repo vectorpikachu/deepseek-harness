@@ -3491,6 +3491,8 @@ export interface Config {
    * `deployment:persona-prefix` shadows it; `{{variable}}` references are strict.
    */
   personaPrefix?: string
+  /** Use the deployment persona prefix as the complete system prompt, retaining tool schemas. */
+  personaComplete?: boolean
   /**
    * Persona suffix template after first-party guidance. A scoped `deployment:persona-suffix`
    * section shadows it; `{{variable}}` references are strict. Defaults to empty.

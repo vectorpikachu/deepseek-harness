@@ -32,6 +32,25 @@ function contributed(assembly: PromptAssembly): PromptAssembly['sections'] {
 }
 
 describe('SystemPrompt', () => {
+  it('uses the complete deployment persona while retaining tools and required context', async () => {
+    const ctx = new Context()
+    try {
+      await ctx.plugin(SystemPrompt, {
+        personaPrefix: 'Only this persona.', personaComplete: true,
+        personaSuffix: 'Omitted suffix.', includeRuntimeContext: false,
+      })
+      ctx.systemPrompt.section({ name: 'guidance', order: 500, text: 'Omitted guidance.' })
+      ctx.systemPrompt.context({ name: 'required', order: 0, required: true, text: 'Required context.' })
+      ctx.systemPrompt.context({ name: 'optional', order: 1, text: 'Omitted context.' })
+      ctx.systemPrompt.tools(() => ({ schemas: [{ name: 'edit', description: 'Edit a file.', parameters: {} }] }))
+      const assembly = await ctx.systemPrompt.assemble()
+      expect(renderPrompt(assembly)).toBe('Only this persona.')
+      expect(assembly.tools.map(tool => tool.name)).toEqual(['edit'])
+      expect(assembly.contexts).toEqual([{ name: 'required', text: 'Required context.' }])
+    } finally {
+      await ctx.fiber.dispose()
+    }
+  })
   it('retains required user context when optional context is suppressed', async () => {
     const ctx = new Context()
     try {

@@ -261,6 +261,8 @@ export interface Config {
    * `deployment:persona-prefix` shadows it; `{{variable}}` references are strict.
    */
   personaPrefix?: string
+  /** Use the deployment persona prefix as the complete system prompt, retaining tool schemas. */
+  personaComplete?: boolean
   /**
    * Persona suffix template after first-party guidance. A scoped `deployment:persona-suffix`
    * section shadows it; `{{variable}}` references are strict. Defaults to empty.
@@ -427,6 +429,7 @@ export class SystemPrompt extends Service {
     includeHarnessIdentity: z.boolean().default(true),
     includeRuntimeContext: z.boolean().default(true),
     personaPrefix: z.string().default(''),
+    personaComplete: z.boolean().default(false),
     personaSuffix: z.string().default(''),
     // Preserve omission because an explicit empty order lacks the rest marker.
     toolOrder: z.array(z.string()).default(undefined as unknown as string[]),
@@ -454,6 +457,7 @@ export class SystemPrompt extends Service {
       order: this.getSectionOrder('DEPLOYMENT_PERSONA_PREFIX'),
       // The fallback narrows the optional input type; the schema already defaults it.
       text: config.personaPrefix ?? '',
+      ...(config.personaComplete ? { complete: true } : {}),
     })
     this.section({
       name: PERSONA_SUFFIX_SECTION,
