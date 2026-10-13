@@ -110,7 +110,7 @@ If a required `gh`, `pnpm`, build, test, or generator command fails because the 
 
 ### Run relevant checks locally
 
-Commit each completed feature after its relevant checks pass; keep its code, tests, and documentation together.
+Commit validated features with their code, tests, and docs; push to the confirmed project remote and verify its HEAD.
 
 Before pushing, follow [dsh-pre-push-checks](.agents/skills/dsh-pre-push-checks/SKILL.md); report only commands run. After `gh stack sync`, validate immediately; do not merge before checks pass.
 
